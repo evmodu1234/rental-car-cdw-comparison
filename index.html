@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>렌트카·차량구독 자차 처리 범위 비교</title>
+  <meta name="description" content="주요 렌트카 및 차량구독 서비스의 자차 처리 시 단독사고 포함 여부와 차대차 한정 여부를 비교한 자료입니다." />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #637083;
+      --line: #dce3ee;
+      --blue: #2563eb;
+      --blue-dark: #1e40af;
+      --navy: #0f172a;
+      --green: #0f8b63;
+      --yellow: #b7791f;
+      --red: #c2410c;
+      --soft-blue: #eaf1ff;
+      --soft-green: #e9f8f2;
+      --soft-yellow: #fff7df;
+      --soft-red: #fff0e8;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at 82% 8%, rgba(20, 184, 166, 0.10), transparent 28%),
+        var(--bg);
+      line-height: 1.62;
+      word-break: keep-all;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 70px 0 34px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 62%, #0f766e 100%);
+      color: white;
+      border-radius: 30px;
+      padding: 48px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      right: -120px;
+      top: -140px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border: 1px solid rgba(255,255,255,0.34);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #dbeafe;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 4.6vw, 55px);
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      margin: 0 0 18px;
+      max-width: 880px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 800px;
+      color: #e8eefc;
+      font-size: 18px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.14);
+      color: #f8fafc;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(245, 247, 251, 0.78);
+      border-bottom: 1px solid rgba(220, 227, 238, 0.9);
+    }
+
+    nav .nav-inner {
+      display: flex;
+      gap: 10px;
+      padding: 12px 0;
+      overflow-x: auto;
+    }
+
+    nav a {
+      flex: 0 0 auto;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    main {
+      padding: 28px 0 80px;
+    }
+
+    section {
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+    }
+
+    h2 {
+      font-size: 28px;
+      line-height: 1.25;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: var(--navy);
+    }
+
+    h3 {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+      color: var(--navy);
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 16px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .summary-item {
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    .summary-item strong {
+      display: block;
+      color: var(--navy);
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .summary-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .callout {
+      padding: 20px 22px;
+      border-radius: 18px;
+      border: 1px solid #bfdbfe;
+      background: var(--soft-blue);
+      margin: 20px 0 0;
+    }
+
+    .callout strong {
+      color: var(--blue-dark);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 22px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 15px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      text-align: left;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .company {
+      font-weight: 900;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .tag.green { background: var(--soft-green); color: var(--green); }
+    .tag.yellow { background: var(--soft-yellow); color: var(--yellow); }
+    .tag.red { background: var(--soft-red); color: var(--red); }
+    .tag.blue { background: var(--soft-blue); color: var(--blue-dark); }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .detail {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .detail .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+
+    .detail p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .detail p:last-child {
+      margin-bottom: 0;
+    }
+
+    .interpretation {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .box {
+      border-radius: 18px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    .clause {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .clause h3 {
+      color: white;
+    }
+
+    .clause p, .clause li {
+      color: #dbeafe;
+    }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .source {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px 15px;
+      font-size: 14px;
+    }
+
+    .source span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        padding: 34px 24px;
+      }
+
+      .summary-grid,
+      .detail-grid,
+      .interpretation,
+      .source-list {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    @media print {
+      nav {
+        display: none;
+      }
+
+      body {
+        background: white;
+      }
+
+      .card, .hero {
+        box-shadow: none;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      a {
+        color: inherit;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="hero">
+        <div class="eyebrow">보험 담보 검토 · 자차 처리 범위</div>
+        <h1>렌트카·차량구독 서비스 자차 처리 범위 비교</h1>
+        <p>
+          주요 렌트카·카셰어링·차량구독 서비스의 “자차 처리”가 단독사고까지 포함하는지,
+          또는 차대차 사고 중심으로 운영되는지 공개 약관과 공식 안내를 기준으로 정리한 자료입니다.
+        </p>
+        <div class="hero-meta">
+          <span class="pill">조사 기준일: 2026.06.25</span>
+          <span class="pill">대상: 롯데렌터카 · SK렌터카 · 쏘카 · 그린카/G car · 차즘 · 패러데이</span>
+          <span class="pill">용도: 계약서·이용약관 보완 검토</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="#summary">핵심 결론</a>
+      <a href="#comparison">업체별 비교표</a>
+      <a href="#details">회사별 검토</a>
+      <a href="#interpretation">실무상 해석</a>
+      <a href="#clause">계약서 반영</a>
+      <a href="#sources">출처</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section id="summary" class="card">
+      <h2>핵심 결론</h2>
+      <p class="lead">
+        단순히 “자차 가능” 또는 “자차보험 포함”이라고 표시되어 있다고 해서 단독사고 전부가 자동 보장된다고 보기는 어렵습니다.
+        특히 일반 자동차보험에서는 자기차량손해 담보와 차량단독사고 손해보상 특약의 범위가 구분될 수 있습니다.
+      </p>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <strong>① 차대차만은 아님</strong>
+          <p>쏘카처럼 “다른 차량 또는 물체와의 충돌·접촉”을 보장 범위로 두는 경우, 벽·기둥·가드레일 접촉 사고는 포함될 여지가 큽니다.</p>
+        </div>
+        <div class="summary-item">
+          <strong>② 단독사고 전부는 별도 확인</strong>
+          <p>침수, 전복, 추락, 가해자 불명 사고 등은 일반 자차 담보와 별도 특약 또는 별도 약관 문구 확인이 필요합니다.</p>
+        </div>
+        <div class="summary-item">
+          <strong>③ 미신고 시 면책 제한</strong>
+          <p>사고·파손을 즉시 알리지 않거나 은폐, 현장이탈, 허위접수한 경우 차량손해면책이 제한될 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>자료 작성 방향:</strong>
+        외부 공개자료만으로 단독사고 포함 여부가 명확하지 않은 업체는 “확정”이 아니라
+        “계약서·보험증권 확인 필요”로 표시하는 것이 안전합니다.
+      </div>
+    </section>
+
+    <section id="comparison" class="card">
+      <h2>업체별 비교표</h2>
+      <p class="lead">
+        아래 표는 공개자료 기준의 1차 판단입니다. 실제 사고처리 가능 여부는 사고 경위, 운전자 자격,
+        신고 여부, 계약 상품, 보험증권, 개별 약관에 따라 달라질 수 있습니다.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>업체</th>
+              <th>자차/차량손해 처리 명칭</th>
+              <th>단독사고 포함 여부</th>
+              <th>차대차 한정 여부</th>
+              <th>핵심 근거 및 검토 포인트</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="company">롯데렌터카</td>
+              <td>자차손해면책제도, CDW</td>
+              <td><span class="tag green">포함 가능성 높음</span></td>
+              <td><span class="tag blue">차대차 한정 아님</span></td>
+              <td>
+                공식 안내에서 “귀책사유로 발생하는 모든 차량손해” 및 “고객의 실수로 발생한 자차사고”라는 표현을 사용합니다.
+                단, 단독사고의 세부 유형을 전부 열거한 것은 아니므로 약관상 면책사유 확인이 필요합니다.
+              </td>
+            </tr>
+            <tr>
+              <td class="company">SK렌터카</td>
+              <td>자차 보험 / 회사 명의 보험</td>
+              <td><span class="tag yellow">공개자료상 확정 어려움</span></td>
+              <td><span class="tag yellow">차대차 한정 단정 불가</span></td>
+              <td>
+                장기렌트 안내에서 자차 보험과 세금이 월 요금에 포함된다고 설명하고,
+                법인 안내에서는 차량 보험이 SK렌터카 명의이고 사고 발생 시 SK렌터카가 대응한다고 안내합니다.
+                다만 단독사고 포함·제외를 직접 명시한 공개 문구는 확인되지 않았습니다.
+              </td>
+            </tr>
+            <tr>
+              <td class="company">쏘카</td>
+              <td>차량손해면책제도</td>
+              <td><span class="tag green">타물체 접촉 단독사고 포함 가능</span></td>
+              <td><span class="tag blue">차대차만은 아님</span></td>
+              <td>
+                공식 요금 안내상 선택한 면책상품에 따라 쏘카 차량 수리비와 휴차보상료에 대한 자기부담금 한도가 정해집니다.
+                기존 차량손해면책 약관상 “다른 차량 또는 물체와의 충돌·접촉” 사고가 핵심 범위로 확인됩니다.
+              </td>
+            </tr>
+            <tr>
+              <td class="company">그린카 / G car</td>
+              <td>차량손해면책제도</td>
+              <td><span class="tag green">포함 가능성 있음</span></td>
+              <td><span class="tag blue">차대차 한정 문구는 확인 안 됨</span></td>
+              <td>
+                자동차대여약관상 사고 발생 시 자기차량손해는 회사가 운영하는 차량손해면책제도로 면책 받을 수 있다고 안내됩니다.
+                또한 대여기간 내 사고·파손 미신고는 금지행위로 규정됩니다. 단독사고 전부를 명시적으로 포함한다고 보기는 어려워 세부 약관 확인이 필요합니다.
+              </td>
+            </tr>
+            <tr>
+              <td class="company">차즘</td>
+              <td>장기렌트 자차보험 / 금융사 보험</td>
+              <td><span class="tag yellow">금융사별 확인 필요</span></td>
+              <td><span class="tag yellow">차즘 자체 기준 판단 불가</span></td>
+              <td>
+                차즘은 장기렌트의 경우 금융사가 보험을 가입하고, 선택 가능 항목으로 대물배상, 자손배상, 면책금 한도 등을 안내합니다.
+                플랫폼·중개 성격이 있으므로 실제 단독사고 포함 여부는 계약 금융사와 보험증권 기준으로 확인해야 합니다.
+              </td>
+            </tr>
+            <tr>
+              <td class="company">패러데이</td>
+              <td>구독자 직접 보험 가입 구조</td>
+              <td><span class="tag yellow">가입 보험에 따라 달라짐</span></td>
+              <td><span class="tag yellow">개별 보험증권 기준</span></td>
+              <td>
+                파트너 안내 페이지상 보험은 구독자가 가입하고, 사고 시 지급되는 보험금은 파트너가 수취하는 구조로 설명됩니다.
+                따라서 단독사고 포함 여부는 구독자가 가입한 자동차보험의 자기차량손해 및 차량단독사고 특약 가입 여부를 확인해야 합니다.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="details" class="card">
+      <h2>회사별 상세 검토</h2>
+      <p class="lead">각 업체별로 “자차 처리”라는 표현이 실제로 어디까지 확장되는지 실무 관점에서 해석했습니다.</p>
+
+      <div class="detail-grid">
+        <div class="detail">
+          <h3>롯데렌터카</h3>
+          <div class="meta">
+            <span class="tag green">범위 넓음</span>
+            <span class="tag blue">CDW</span>
+          </div>
+          <p>
+            “차량대여 중 귀책사유로 인하여 발생하는 모든 차량손해”라는 표현을 사용하고 있어
+            차대차 사고에만 한정된 구조로 보기는 어렵습니다.
+          </p>
+          <p>
+            다만 휴차보상료는 CDW 가입 여부와 무관하게 별도 청구될 수 있으므로,
+            실제 계약서에는 수리비와 휴차료를 분리해 표시하는 것이 안전합니다.
+          </p>
+        </div>
+
+        <div class="detail">
+          <h3>SK렌터카</h3>
+          <div class="meta">
+            <span class="tag yellow">문구 불명확</span>
+            <span class="tag blue">회사 명의 보험</span>
+          </div>
+          <p>
+            자차보험이 월 요금에 포함된다는 안내와 사고 처리 대응 문구는 확인됩니다.
+            그러나 단독사고를 포함한다는 직접적인 공개 문구는 확인되지 않았습니다.
+          </p>
+          <p>
+            따라서 SK렌터카 사례는 “자차보험 포함”으로만 표시하고,
+            단독사고 포함 여부는 보험조건 확인 필요로 분류하는 것이 안전합니다.
+          </p>
+        </div>
+
+        <div class="detail">
+          <h3>쏘카</h3>
+          <div class="meta">
+            <span class="tag green">타물체 접촉</span>
+            <span class="tag blue">차대차만은 아님</span>
+          </div>
+          <p>
+            차량손해면책제도는 선택한 면책 상품에 따라 쏘카 차량 수리비와 휴차보상료의 자기부담금 한도를 정하는 구조입니다.
+          </p>
+          <p>
+            “다른 차량 또는 물체와의 충돌·접촉” 문구를 기준으로 보면,
+            벽·기둥·가드레일 등 물체와의 접촉 사고는 단독사고라도 포함될 가능성이 큽니다.
+          </p>
+        </div>
+
+        <div class="detail">
+          <h3>그린카 / G car</h3>
+          <div class="meta">
+            <span class="tag green">면책제도 운영</span>
+            <span class="tag yellow">세부범위 확인</span>
+          </div>
+          <p>
+            자동차대여약관상 차량손해면책제도 운영 및 자기차량손해 면책 구조가 확인됩니다.
+            미신고 사고와 파손 미신고는 금지행위로 명시됩니다.
+          </p>
+          <p>
+            단독사고를 명확히 전부 포함한다고 쓰기보다는,
+            “차대차 한정 문구는 확인되지 않으나, 세부 면책범위는 약관 확인 필요”로 정리하는 것이 적절합니다.
+          </p>
+        </div>
+
+        <div class="detail">
+          <h3>차즘</h3>
+          <div class="meta">
+            <span class="tag yellow">중개 플랫폼</span>
+            <span class="tag yellow">금융사별</span>
+          </div>
+          <p>
+            차즘은 장기렌트·리스 비교 및 견적 플랫폼 성격이 강하고,
+            장기렌트 보험은 금융사가 가입하는 구조로 설명됩니다.
+          </p>
+          <p>
+            따라서 차즘 자체의 일괄 기준으로 단독사고 포함 여부를 확정하기 어렵고,
+            실제 계약 금융사와 보험증권의 담보 구성을 확인해야 합니다.
+          </p>
+        </div>
+
+        <div class="detail">
+          <h3>패러데이</h3>
+          <div class="meta">
+            <span class="tag yellow">구독자 보험</span>
+            <span class="tag red">보험증권 필수</span>
+          </div>
+          <p>
+            공개자료상 보험은 구독자가 가입하지만 사고 시 보험금은 파트너가 수취하는 구조로 설명됩니다.
+          </p>
+          <p>
+            이 경우 자차가 차대차만인지, 단독사고 특약까지 포함되는지는 구독자가 실제로 가입한 보험증권이 기준이 됩니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="interpretation" class="card">
+      <h2>실무상 해석</h2>
+      <p class="lead">
+        차량구독·렌트 계약서 작성 시에는 “자차 처리 가능”이라는 문구만으로는 부족합니다.
+        아래 기준을 계약서 또는 상품 안내에 명확히 구분해 두는 것이 좋습니다.
+      </p>
+
+      <div class="interpretation">
+        <div class="box">
+          <h3>구분해야 할 사고 유형</h3>
+          <ul>
+            <li><strong>차대차 사고:</strong> 다른 자동차와 충돌·접촉한 사고</li>
+            <li><strong>타물체 접촉 단독사고:</strong> 벽, 기둥, 가드레일, 주차장 구조물 등과 충돌·접촉한 사고</li>
+            <li><strong>비접촉 단독사고:</strong> 추락, 전복, 침수, 낙뢰, 낙하물, 가해자 불명 사고 등</li>
+            <li><strong>면책 제한 사고:</strong> 미신고, 허위신고, 음주·무면허, 비계약 운전자, 현장이탈 등</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h3>표현상 주의점</h3>
+          <ul>
+            <li>“자차 포함”이라고만 쓰면 단독사고 포함 여부가 불명확합니다.</li>
+            <li>“타물체 충돌·접촉 포함”과 “침수·전복·추락 포함”은 별도로 구분하는 것이 안전합니다.</li>
+            <li>사고 미고지 또는 임의수리 시 차량손해면책 적용 제한을 명확히 표시해야 합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>정리:</strong>
+        비교 대상 중 공개자료만으로 “차대차 자차만 가입한다”고 명확히 확인되는 곳은 없었습니다.
+        다만 SK렌터카, 차즘, 패러데이는 단독사고 포함 여부를 공개자료만으로 확정하기 어렵기 때문에
+        계약서·보험증권 확인 필요로 분류하는 것이 적절합니다.
+      </div>
+    </section>
+
+    <section id="clause" class="card">
+      <h2>계약서 반영 포인트</h2>
+      <p class="lead">
+        스칼라데이터의 차량 구독 서비스 약관 또는 계약서에 반영할 경우 아래처럼
+        “자차 처리 범위”와 “면책 제한 사유”를 분리하여 기재하는 방식이 적절합니다.
+      </p>
+
+      <div class="clause">
+        <h3>조항 초안</h3>
+        <p>
+          회사가 제공하는 차량손해면책 또는 자차 처리 범위는 계약서 및 보험증권에서 정한 담보 범위에 한하여 적용됩니다.
+          자차 처리 가능 사고에는 다른 차량과의 충돌·접촉 사고, 타물체와의 충돌·접촉 사고가 포함될 수 있으나,
+          침수, 전복, 추락, 가해자 불명 사고 등 차량단독사고에 해당하는 손해는 별도 특약 또는 계약상 명시가 있는 경우에 한하여 적용됩니다.
+        </p>
+        <p>
+          이용자는 사고 또는 차량 파손 발생 즉시 회사에 통보하여야 하며,
+          사고 사실을 고지하지 않거나 은폐, 허위신고, 현장이탈, 임의수리, 비계약 운전자 운행, 음주·무면허 운전 등
+          회사 또는 보험자가 정한 면책 제한 사유에 해당하는 경우 차량손해면책 또는 자차 처리가 제한될 수 있습니다.
+        </p>
+      </div>
+
+      <div class="callout">
+        <strong>추천 문구:</strong>
+        “자차 포함” 대신 “차대차 및 타물체 접촉 사고 포함 여부”, “침수·전복·추락 등 차량단독사고 포함 여부”,
+        “사고 미고지 시 면책 제한 여부”를 각각 나누어 표시하는 것이 좋습니다.
+      </div>
+    </section>
+
+    <section id="sources" class="card">
+      <h2>참고 출처</h2>
+      <p class="lead">공개 웹페이지 기준이며, 각 회사의 약관·보험 조건은 변경될 수 있습니다.</p>
+
+      <div class="source-list">
+        <div class="source">
+          <a href="https://www.lotterentacar.net/hp/kor/reservation/shortInfo/pay.do?mnCd=T2MK0102" target="_blank" rel="noopener noreferrer">롯데렌터카 · 대여 및 요금안내</a>
+          <span>자차손해면책제도(CDW), 면책금, 휴차보상료 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://www.skdirect.co.kr/intro/nc" target="_blank" rel="noopener noreferrer">SK렌터카 · 신차 장기렌터카 안내</a>
+          <span>자차 보험, 취득세, 자동차세 월 요금 포함 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://www.skdirect.co.kr/biz" target="_blank" rel="noopener noreferrer">SK렌터카 · 법인 렌터카 안내</a>
+          <span>회사 명의 보험, 사고 발생 시 SK렌터카 대응 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://www.socar.kr/fare" target="_blank" rel="noopener noreferrer">쏘카 · 요금 및 보험 안내</a>
+          <span>차량손해면책제도, 차량 수리비, 휴차보상료 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://www.greencar-gcar.co.kr/car-rental-terms" target="_blank" rel="noopener noreferrer">롯데렌터카 G car · 자동차대여약관</a>
+          <span>차량손해면책제도, 사고·파손 미신고 제한 조항 검토</span>
+        </div>
+        <div class="source">
+          <a href="https://chazm.co.kr/post/27" target="_blank" rel="noopener noreferrer">차즘 · 자동차 보험용어 정리</a>
+          <span>장기렌트 보험 구조, 금융사 보험 가입 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://faraday.framer.website/" target="_blank" rel="noopener noreferrer">패러데이 · 파트너 안내 페이지</a>
+          <span>구독자 보험 가입 및 사고 보험금 수취 구조 안내</span>
+        </div>
+        <div class="source">
+          <a href="https://v.daum.net/v/tjCdTfu5RI" target="_blank" rel="noopener noreferrer">삼성화재 다이렉트 · 차량단독사고 손해보상 특약 설명</a>
+          <span>자기차량손해와 차량단독사고 특약 구분 참고</span>
+        </div>
+      </div>
+
+      <p class="footer-note">
+        ※ 본 자료는 공개자료를 바탕으로 한 내부 검토용 정리이며, 법률 자문 또는 보험금 지급 가능성에 대한 확정 판단이 아닙니다.
+        실제 계약 체결 또는 사고 처리 시에는 각 회사의 최신 약관, 보험증권, 개별 계약서를 확인해야 합니다.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
